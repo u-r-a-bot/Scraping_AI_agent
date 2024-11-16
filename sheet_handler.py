@@ -14,7 +14,9 @@ def handle_google_sheet():
         st.write("Credentials loaded successfully.")
 
         try:
-            files = auth.list_all_drive_files(credentials)
+
+            auth.authorize_user()
+            files = auth.list_all_drive_files()
             file_names = [file['name'] for file in files]
             file_ids = [file['id'] for file in files]
 
@@ -27,9 +29,9 @@ def handle_google_sheet():
                     sheet_data = auth.open_sheet_by_id(credentials, selected_file_id)
                     headers = sheet_data[0]
                     st.write("Google Sheet Columns:", headers)
-                    selected_column = st.selectbox("Select a useful column:", headers)
-                    st.write(f"You selected: {selected_column}")
+                    selected_column = st.pills("Select a useful column:", headers,selection_mode="single")
                     st.session_state['selected_column'] = selected_column
+                    st.write(sheet_data[])
 
                 except Exception as e:
                     st.error(f"Failed to load data from the selected Google Sheet: {e}")
