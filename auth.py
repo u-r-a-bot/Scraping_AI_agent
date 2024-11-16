@@ -2,9 +2,7 @@ import os
 import json
 import gspread
 import streamlit as st
-import typing
-from oauth2client.service_account import ServiceAccountCredentials
-from google.auth.exceptions import RefreshError
+
 scopes = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
@@ -24,7 +22,7 @@ def load_credentials(fileobj , scopes = scopes):
 
 @st.cache_resource
 def authorize_user(fileobj= file_path):
-    file, auth_user = gspread.oauth_from_dict(credentials=load_credentials(fileobj))
+    file, auth_user = gspread.oauth_from_dict(credentials=load_credentials(fileobj))# Changed source for cred error
     st.session_state['token'] = file
 
 def list_all_drive_files():

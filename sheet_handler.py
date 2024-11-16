@@ -23,17 +23,16 @@ def handle_google_sheet():
             selected_file_name = st.selectbox("Select a Google Sheet file:", file_names)
 
             selected_file_id = file_ids[file_names.index(selected_file_name)]
+            try:
+                sheet_data = auth.open_sheet_by_id(credentials, selected_file_id)
+                headers = sheet_data[0]
+                st.write(type(headers))
+                st.write("Google Sheet Columns:", headers)
+                selected_column = st.pills("Select a useful column:", headers,selection_mode="single")
+                st.session_state['selected_column'] = selected_column
+                st.write(sheet_data[0])
 
-            if st.button("Load Sheet Data"):
-                try:
-                    sheet_data = auth.open_sheet_by_id(credentials, selected_file_id)
-                    headers = sheet_data[0]
-                    st.write("Google Sheet Columns:", headers)
-                    selected_column = st.pills("Select a useful column:", headers,selection_mode="single")
-                    st.session_state['selected_column'] = selected_column
-                    st.write(sheet_data[])
-
-                except Exception as e:
-                    st.error(f"Failed to load data from the selected Google Sheet: {e}")
+            except Exception as e:
+                st.error(f"Failed to load data from the selected Google Sheet: {e}")
         except Exception as e:
             st.error(f"Failed to list Google Drive files: {e}")
