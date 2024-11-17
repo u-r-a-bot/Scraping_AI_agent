@@ -114,7 +114,6 @@ if 'search_results' in st.session_state and 'queries' in st.session_state:
                     llm_results[entity] = response
 
                 # Store LLM results in session state
-                st.write(llm_results)
                 st.session_state['llm_results'] = llm_results
             else:
                 st.warning(
