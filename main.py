@@ -101,6 +101,7 @@ if 'search_results' in st.session_state and 'queries' in st.session_state:
 
 if 'llm_results' in st.session_state:
     llm_results = st.session_state['llm_results']
+    st.write(llm_results)
     data_dict = {}
     entities = st.session_state['loaded_data']
 
