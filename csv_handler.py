@@ -16,5 +16,6 @@ def handle_csv():
                     st.write(df[selected_column].head())
                     st.session_state['selected_column'] = selected_column
                     st.session_state['loaded_data'] = df[selected_column].tolist()
+                    st.session_state['full_data'] = df
             except Exception as e:
                 st.error(f"Failed to load CSV file: {e}")

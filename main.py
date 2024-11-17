@@ -1,7 +1,11 @@
+import pandas as pd
 import streamlit as st
+
+import auth
 from util_agent import LangChainAgent
 from csv_handler import handle_csv
 import re
+import json
 from sheet_handler import handle_google_sheet
 
 st.secrets.load_if_toml_exists()
@@ -45,8 +49,6 @@ if 'selected_column' in st.session_state:
 
         st.success("Query is valid. Proceeding with the search!")
 
-        # Optionally display the processed queries
-        st.write("Processed queries:", queries_with_entities)
     else:
         # Optionally, display a message to prompt the user to enter a query
         st.warning("Please enter a query to proceed.")
@@ -63,13 +65,13 @@ if 'queries' in st.session_state:  # Check if queries exist in session state
     # Ensure that the number of queries matches the number of entities
     if len(queries) == len(loaded_data):
         # Iterate over the entities and corresponding queries
-        for entity, query in zip(loaded_data, queries):
-            st.write(f"Searching for: {query}")  # Debugging/logging
-            search_results[entity] = agent.fetch_search_results(query)
+        with st.status("Searching"):
+            for entity, query in zip(loaded_data, queries):
+                st.write(f"Searching for: {query}")  # Debugging/logging
+                search_results[entity] = agent.fetch_search_results(query)
 
         # Store results in session state
         st.session_state['search_results'] = search_results
-        st.write("Search Results:", search_results)
 
     else:
         st.warning("The number of queries does not match the number of entities. Please check your inputs.")
@@ -112,12 +114,51 @@ if 'search_results' in st.session_state and 'queries' in st.session_state:
                     llm_results[entity] = response
 
                 # Store LLM results in session state
+                st.write(llm_results)
                 st.session_state['llm_results'] = llm_results
-                st.write("LLM Results:", llm_results)
             else:
                 st.warning(
                     "The number of queries does not match the number of search results. Please check your inputs.")
         else:
             st.warning(
                 "No placeholders found in the prompt. Please ensure the prompt contains a placeholder like {entity}.")
+
+if 'llm_results' in st.session_state:
+    llm_results = st.session_state['llm_results']
+    data_dict = {}
+    entities = st.session_state['loaded_data']
+
+    for entity in entities:
+        # First, parse the inner string into a dictionary
+        try:
+            # Parsing the string to a dictionary (if it's in JSON format)
+            result_dict = json.loads(llm_results[entity])  # This should be a string in JSON format
+
+            # Now you can extract the values from the dictionary
+            data_dict[entity] = [value for key, value in result_dict.items()]
+        except json.JSONDecodeError:
+            # Handle cases where the inner string is not a valid JSON
+            st.warning(f"Failed to decode JSON for {entity}. Skipping this entity.")
+            data_dict[entity] = [None]  # You could choose to set this to None or a default value
+    # Convert the dictionary to a DataFrame
+    selected_column = st.session_state['selected_column']
+    series_dict = pd.Series(data_dict,name='results')
+    data_df = st.session_state['full_data']
+    merged_df = pd.merge(data_df, series_dict, left_on= st.session_state['selected_column'],right_index=True, how='left')
+    if data_source == "Connect Google Sheet":
+        if st.button('Update to Google sheet'):
+            def convert_list_to_string(cell):
+                if isinstance(cell, list):
+                    return ', '.join(cell)  # Join list items with a comma
+                return cell
+
+
+            # Apply the conversion function to the entire DataFrame
+            processed_df = merged_df.applymap(convert_list_to_string)
+
+            # Update the Google Sheet
+            worksheet = auth.sheet_object_by_id(st.session_state['credentials'], st.session_state['sheet_id'])
+            worksheet.update([processed_df.columns.tolist()] + processed_df.values.tolist())
+    # Display the Series in Streamlit
+    st.write(merged_df)
 

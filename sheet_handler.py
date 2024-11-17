@@ -3,18 +3,9 @@ import auth
 import pandas as pd
 
 def handle_google_sheet():
-    creds_file = st.file_uploader("Upload credentials.json file", type="json")
-
-    @st.cache_resource
-    def get_credentials(file_obj):
-        return auth.load_credentials(file_obj)
-
-    if creds_file:
-        credentials = get_credentials(creds_file)
-        st.write("Credentials loaded successfully.")
 
         try:
-
+            credentials = auth.load_credentials()
             auth.authorize_user()
             files = auth.list_all_drive_files()
             file_names = [file['name'] for file in files]
@@ -33,6 +24,9 @@ def handle_google_sheet():
                     st.session_state['selected_column'] = selected_column
                     st.write(sheet_df[selected_column].head())
                     st.session_state['loaded_data'] = sheet_df[selected_column].tolist()
+                    st.session_state['full_data'] = sheet_df
+                    st.session_state['credentials'] = credentials
+                    st.session_state['sheet_id'] = selected_file_id
 
 
             except Exception as e:

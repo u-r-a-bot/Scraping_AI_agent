@@ -48,16 +48,24 @@ class LangChainAgent:
     def extract_info_with_prompt(self, search_results: str, prompt: str) -> str:
         """Extract specific information from search results using the provided prompt."""
         try:
-            # Combine the prompt and search results
-            full_prompt = f"{prompt}\n\n Web Search Results:\n{search_results}"
+            full_prompt = f"{prompt}\n\n Web Search Results:\n{search_results} "
             messages = [
                 (
                     "system",
-                    "You are a helpful assistant who answers query based on Web search Results",
+                    """ You are a helpful assistant that extracts specific information from web search results.
+                        You must Respond in JSON format with the structure
+                        {
+                            "Query asked" : "Extracted info from web search results"
+                        }
+                        - If any value is missing use None
+                        - You strictly answer from the given Web search results 
+                        - If there are multiple values you use a list in the value part of the json and not violate the structure
+                        - You only respond in JSON format
+                        
+                    """,
                 ),
                 ("human", full_prompt),
             ]
-            print(full_prompt)
-            return self.llm.invoke(messages)
+            return self.llm.invoke(messages).content
         except Exception as e:
             return f"Error during information extraction: {e}"
