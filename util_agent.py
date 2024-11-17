@@ -2,26 +2,24 @@ from langchain.agents import initialize_agent, Tool
 from langchain.llms import OpenAI
 from langchain.utilities import SerpAPIWrapper
 import os
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 
 class LangChainAgent:
     """LangChain Agent for web search and targeted data extraction."""
 
     def __init__(self, groq_key: str, serpapi_key: str):
-        # Set up API keys
-        # os.environ["OPENAI_API_KEY"] = openai_key
+
 
         os.environ["SERPAPI_API_KEY"] = serpapi_key
         os.environ['GROQ_API_KEY'] =groq_key
 
-        # Initialize SerpAPIWrapper
+
         self.serpapi = SerpAPIWrapper(serpapi_api_key=serpapi_key)
 
         # Initialize LangChain LLM
         # self.llm = OpenAI(model="gpt-4o-mini", temperature=0)
         self.llm = ChatGroq(model_name="mixtral-8x7b-32768",temperature = 0)
-        # Define tools for the agent
+
         self.tools = [
             Tool(
                 name="Web Search",
