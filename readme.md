@@ -25,7 +25,7 @@ A user-friendly dashboard enables seamless interaction with the system.
 ```cmd
 git clone https://github.com/u-r-a-bot/Scraping_AI_agent.git
 pip install -r requirements.txt
-streamlit run main.app
+streamlit run main.py
 ```
 ## Usage Guide
 1. **Upload or load Data from google sheets**
