@@ -2,7 +2,7 @@ import requests
 import os
 import streamlit as st
 import openai
-st.secrets.load_if_toml_exists()
+
 
 openai.api_key = st.secrets["OpenAI_key"]
 def search_serpapi(query, api_key):
@@ -55,7 +55,7 @@ def send_to_openai(results, entity_name ):
 
         # Send the prompt to OpenAI's API (using text-davinci-003 or GPT-4)
         response = openai.Completion.create(
-            model="text-davinci-003",  # You can replace this with GPT-4 if you have access
+            model="gpt-4o",  # You can replace this with GPT-4 if you have access
             prompt=prompt,
             max_tokens=150  # Adjust token limit as needed
         )

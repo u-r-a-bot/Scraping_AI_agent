@@ -8,7 +8,7 @@ scopes = [
     "https://www.googleapis.com/auth/drive"
 
 ]
-file_path = "C:\\Users\\PhantomGrogu\\Documents\\Submission\\creds.json"
+file_path = "C:\\Users\\PhantomGrogu\\Documents\\Submission\\credentials.json"
 def load_credentials(fileobj , scopes = scopes):
     creds_dict = None
     if isinstance(fileobj, (str, os.PathLike)):

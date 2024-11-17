@@ -1,6 +1,6 @@
 import streamlit as st
 import auth
-
+import pandas as pd
 
 def handle_google_sheet():
     creds_file = st.file_uploader("Upload credentials.json file", type="json")
@@ -25,12 +25,15 @@ def handle_google_sheet():
             selected_file_id = file_ids[file_names.index(selected_file_name)]
             try:
                 sheet_data = auth.open_sheet_by_id(credentials, selected_file_id)
-                headers = sheet_data[0]
-                st.write(type(headers))
-                st.write("Google Sheet Columns:", headers)
-                selected_column = st.pills("Select a useful column:", headers,selection_mode="single")
-                st.session_state['selected_column'] = selected_column
-                st.write(sheet_data[0])
+                sheet_df = pd.DataFrame(sheet_data)
+                st.write(sheet_df)
+                columns = sheet_df.columns
+                selected_column = st.pills("Select a column:", columns,selection_mode="single")
+                if selected_column:
+                    st.session_state['selected_column'] = selected_column
+                    st.write(sheet_df[selected_column].head())
+                    st.session_state['loaded_data'] = sheet_df[selected_column].tolist()
+
 
             except Exception as e:
                 st.error(f"Failed to load data from the selected Google Sheet: {e}")
