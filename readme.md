@@ -43,6 +43,9 @@ In ```secrets.toml``` add groq and serp api key
 SerpAPI_key = your_serp_api_key
 GroqAPI = your_groq_api_key
 ```
+For google drive functionality you also need to get ```credentials.json``` and place it in 
+root directory of the project.
+To get ```credentials.json``` go to https://docs.gspread.org/en/latest/oauth2.html#for-end-users-using-oauth-client-id
 
 ## Optional Features
 **Can update data to Google sheets directly**

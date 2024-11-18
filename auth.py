@@ -10,7 +10,7 @@ DEFAULT_SCOPES = [
     "https://www.googleapis.com/auth/drive"
 
 ]
-file_path = "C:\\Users\\PhantomGrogu\\Documents\\Submission\\credentials.json"
+file_path = os.path.join(os.getcwd(), 'credentials.json')
 def load_credentials(fileobj = file_path, scopes = DEFAULT_SCOPES):
     creds_dict = None
     if isinstance(fileobj, (str, os.PathLike)):
