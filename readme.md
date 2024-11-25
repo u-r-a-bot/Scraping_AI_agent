@@ -50,5 +50,3 @@ To get ```credentials.json``` go to https://docs.gspread.org/en/latest/oauth2.ht
 ## Optional Features
 **Can update data to Google sheets directly**
 
-### Link to the Loom video
-https://www.loom.com/share/842bb6616fe04cd5ac35db6d4c441905?sid=96b4970d-1016-47bd-b598-99ba4248cc44
